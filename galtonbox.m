@@ -1,14 +1,14 @@
 ## -*- texinfo -*-
 ## @deftypefn  {Function File} {} galtonbox ( @var{LEVEL}, @var{BALLS}, @var{INTERVAL})
 ## Plot galton box.
-## @var{LEVEL} means how many levels.
+## @var{LEVEL} means how many levels. ( Default: 1)
 ## @var{BALLS} means how many balls.
 ## @var{INTERVAL} means interval between each frame in seconds. If omitted or 0, no animation.
 
 function galtonbox ( varargin)
 
     nargs = nargin;
-    LEVEL = 0;
+    LEVEL = 1;
     BALLS = 0;
     INTERVAL = 0;
 
@@ -43,7 +43,9 @@ function galtonbox ( varargin)
     hold on
 
     pointInterval = 1;
-    plotLevels( axh, LEVEL, pointInterval);
+    [ ballStartPos, ballLastPos] = plotLevels( axh, LEVEL, pointInterval);
+    disp("ballStartPos"), disp( ballStartPos);
+    disp("ballLastPos"), disp( ballLastPos);
     
 end
 
@@ -53,28 +55,49 @@ function tf = is_positive_scalar_integer( val)
 end
 
 
-% return start point of a ball
-function ret = plotLevels( AXH, LEVELS, POINT_INTERVAL)
-    y0 = POINT_INTERVAL :  2*POINT_INTERVAL : LEVELS * POINT_INTERVAL;
-    y1 = 2*POINT_INTERVAL : 2*POINT_INTERVAL : LEVELS * POINT_INTERVAL;
+% return start point of a ball, and all possible X positions of the ball
+% SP: start point of the ball
+% FXP: final possible x positions of the ball
+function [ SP, FXP] = plotLevels( AXH, LEVELS, POINT_INTERVAL)
+    for level = LEVELS : -1 : 1;
+        unitXPos = unitXPositions( level, LEVELS); 
+        xPos = unitXPos .* POINT_INTERVAL;
+        yPos = level .* POINT_INTERVAL;
 
+        pointColor = 'b';
+        if mod( level, 2) == 0
+            pointColor = 'r';
+        end
 
-    x0 = -POINT_INTERVAL * max( length( y0), length( y1)) : POINT_INTERVAL : POINT_INTERVAL * length( y0);
-    x1 = -POINT_INTERVAL * max( length( y0), length( y1)) : POINT_INTERVAL : POINT_INTERVAL * length( y1);
-
-    halfPointInterval = POINT_INTERVAL / 2;
-    if mod( LEVELS, 2) != 0
-        x0 -= halfPointInterval;
-    else
-        x1 -= halfPointInterval;
+        plot( AXH, xPos, yPos, 'o', 'MarkerEdgeColor', pointColor, 'MarkerFaceColor', pointColor);
     end
 
-    xm0 = repmat( x0, length( y0), 1);
-    xm1 = repmat( x1, length( y1), 1);
+    % assign start point
+    if nargout > 0
+        startPointUnitXPos = unitXPositions( LEVELS, LEVELS);
+        startBallXPos = ( startPointUnitXPos( 1) + startPointUnitXPos( end)) / 2 * POINT_INTERVAL;
+        SP = [  startBallXPos LEVELS*POINT_INTERVAL];
+    end
+    % assign final possible X positions
+    if nargout > 1
+        lastPointUnitXPos = unitXPositions( 1, LEVELS);
+        % For adjacent x pos we calculate "( x0 + x1) / 2"
+        adjXPos = [ lastPointUnitXPos( 1 : (end - 1)) ; lastPointUnitXPos( 2 : end)];
+        FXP = sum( adjXPos) / 2 .* POINT_INTERVAL;
+    end
 
-    plot( AXH, xm0, y0, 'ob', 'MarkerFaceColor', 'b');
-    plot( AXH, xm1, y1, 'or', 'MarkerFaceColor', 'r');
-
-    ret = [ 0 LEVELS*POINT_INTERVAL]; 
+    % caller should not provide more than 2 arguments
+    if nargout > 2
+        error( "galtonbox: At most 2 outputs are permitted");
+    end
 end
-        
+
+
+% return unit positions of points with given level and total level
+function XPOS = unitXPositions( CUR_LEVEL, TOTAL_LEVEL)
+    % unit x pos starts from 0
+    unitLastXPos = TOTAL_LEVEL - CUR_LEVEL + 1;
+    unitXPos = 0 : 1 : unitLastXPos;
+    unitXPos -= unitLastXPos / 2;
+    XPOS = unitXPos;
+end
