@@ -31,10 +31,12 @@ function galtonbox ( varargin)
     % check INTERVAL arg
     if nargs > 2
         INTERVAL = varargin{3};
-        if !is_positive_scalar_integer( INTERVAL)
-            error("galtonbox: INTERVAL should be a positive integer");
+        if !( isscalar( INTERVAL) && isreal( INTERVAL) && INTERVAL >= 0)
+            error("galtonbox: INTERVAL should be a non-negative real number");
         end
     end
+
+    enableAnimate = ( INTERVAL != 0);
 
 
     ballStartXPos = unitBallPositions( LEVEL, LEVEL);
@@ -75,14 +77,18 @@ function galtonbox ( varargin)
     % simulate fall of balls
     for eacBall = 1:BALLS
         ballPos = ballStartPos;
-        pause( 0.4);
-        refreshdata( fh, 'caller'); 
-        drawnow;
-        while ballPos( 2) > 0
-            ballPos = unitNextPosition( ballPos);
-            pause( 0.4);
+        if enableAnimate
+            pause( INTERVAL);
             refreshdata( fh, 'caller'); 
             drawnow;
+        end
+        while ballPos( 2) > 0
+            ballPos = unitNextPosition( ballPos);
+            if enableAnimate
+                pause( 0.4);
+                refreshdata( fh, 'caller'); 
+                drawnow;
+            end
         end
         assert( ballPos( 2) == 0);
         % update barY
@@ -92,14 +98,15 @@ function galtonbox ( varargin)
             barY( barYIdx) += 1;
         end
     end
-    
+
+    % Finally, draw the ultimate graph
+    refreshdata( fh, 'caller');
 end
 
 
 function tf = is_positive_scalar_integer( val)
     tf = isscalar( val) && isnumeric( val) && fix( val) == val && val > 0;
 end
-
 
 % return X limit of the graph
 % SP: start point of the ball, in unit position
