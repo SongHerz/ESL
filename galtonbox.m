@@ -77,25 +77,37 @@ function galtonbox ( varargin)
     % simulate fall of balls
     for eacBall = 1:BALLS
         ballPos = ballStartPos;
+        % Redraw initial position of the ball
         if enableAnimate
             pause( INTERVAL);
             refreshdata( fh, 'caller'); 
             drawnow;
         end
+
         while ballPos( 2) > 0
             ballPos = unitNextPosition( ballPos);
+
+            % Redraw position of the ball
             if enableAnimate
-                pause( 0.4);
+                pause( INTERVAL);
                 refreshdata( fh, 'caller'); 
                 drawnow;
             end
         end
         assert( ballPos( 2) == 0);
+
         % update barY
         barYIdx = find( ballLastXPos == ballPos( 1));
         if !isempty( barYIdx)
             assert( isscalar( barYIdx));
             barY( barYIdx) += 1;
+        end
+
+        % Update ball and bar
+        if enableAnimate
+            pause( INTERVAL);
+            refreshdata( fh, 'caller'); 
+            drawnow;
         end
     end
 
