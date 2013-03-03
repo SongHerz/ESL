@@ -2,14 +2,14 @@
 ## @deftypefn  {Function File} {} galtonbox ( @var{LEVEL}, @var{BALLS}, @var{INTERVAL})
 ## Plot galton box.
 ## @var{LEVEL} means how many levels. ( Default: 1)
-## @var{BALLS} means how many balls.
+## @var{BALLS} means how many balls. ( Default: 1)
 ## @var{INTERVAL} means interval between each frame in seconds. If omitted or 0, no animation.
 
 function galtonbox ( varargin)
 
     nargs = nargin;
     LEVEL = 1;
-    BALLS = 0;
+    BALLS = 1;
     INTERVAL = 0;
 
     % check LEVEL arg
@@ -37,15 +37,40 @@ function galtonbox ( varargin)
     end
 
     % create a new figure
-    figure;
+    fh = figure;
     % create a new axis obj
     axh = gca();
     hold on
 
+    ballStartXPos = unitBallPositions( LEVEL, LEVEL);
+    ballLastXPos = unitBallPositions( 1, LEVEL);
+    assert( length( ballStartXPos) == 1);
+    ballStartPos = [ ballStartXPos( 1) LEVEL];
+
+    % plot levels
     pointInterval = 1;
-    [ ballStartPos, ballLastPos] = plotLevels( axh, LEVEL, pointInterval);
-    disp("ballStartPos"), disp( ballStartPos);
-    disp("ballLastPos"), disp( ballLastPos);
+    plotLevels( axh, LEVEL, pointInterval);
+    % plot ball with ballPos
+    darkGreen = [ 0 0.5 0];
+    ballPos = ballStartPos;
+    ballH = plot( axh, ballPos( 1), ballPos( 2), 'o', ...
+                    'MarkerFaceColor', darkGreen, 'MarkerEdgeColor', darkGreen, 'MarkerSize', 10);
+    set( ballH, 'XDataSource', 'ballPos(1)');
+    set( ballH, 'YDataSource', 'ballPos(2)');
+
+    % simulate fall of balls
+    for eacBall = 1:BALLS
+        ballPos = ballStartPos;
+        pause( 0.4);
+        refreshdata( fh, 'caller'); 
+        drawnow;
+        while ballPos( 2) > 0
+            ballPos = unitNextPosition( ballPos);
+            pause( 0.4);
+            refreshdata( fh, 'caller'); 
+            drawnow;
+        end
+    end
     
 end
 
@@ -55,10 +80,10 @@ function tf = is_positive_scalar_integer( val)
 end
 
 
-% return start point of a ball, and all possible X positions of the ball
-% SP: start point of the ball
-% FXP: final possible x positions of the ball
-function [ SP, FXP] = plotLevels( AXH, LEVELS, POINT_INTERVAL)
+% return start point of a ball, and all possible X positions of the ball in unit position
+% SP: start point of the ball, in unit position
+% FXP: final possible x positions of the ball, in unit position
+function plotLevels( AXH, LEVELS, POINT_INTERVAL)
     for level = LEVELS : -1 : 1;
         unitXPos = unitXPositions( level, LEVELS); 
         xPos = unitXPos .* POINT_INTERVAL;
@@ -71,25 +96,9 @@ function [ SP, FXP] = plotLevels( AXH, LEVELS, POINT_INTERVAL)
 
         plot( AXH, xPos, yPos, 'o', 'MarkerEdgeColor', pointColor, 'MarkerFaceColor', pointColor);
     end
-
-    % assign start point
-    if nargout > 0
-        startPointUnitXPos = unitXPositions( LEVELS, LEVELS);
-        startBallXPos = ( startPointUnitXPos( 1) + startPointUnitXPos( end)) / 2 * POINT_INTERVAL;
-        SP = [  startBallXPos LEVELS*POINT_INTERVAL];
-    end
-    % assign final possible X positions
-    if nargout > 1
-        lastPointUnitXPos = unitXPositions( 1, LEVELS);
-        % For adjacent x pos we calculate "( x0 + x1) / 2"
-        adjXPos = [ lastPointUnitXPos( 1 : (end - 1)) ; lastPointUnitXPos( 2 : end)];
-        FXP = sum( adjXPos) / 2 .* POINT_INTERVAL;
-    end
-
-    % caller should not provide more than 2 arguments
-    if nargout > 2
-        error( "galtonbox: At most 2 outputs are permitted");
-    end
+    % set axis limit
+    xPos = unitXPositions( 1, LEVELS) .* POINT_INTERVAL;
+    axis( [ (xPos(1) - POINT_INTERVAL) (xPos( end) + POINT_INTERVAL) 0 ( (LEVELS + 1) * POINT_INTERVAL)]);
 end
 
 
@@ -100,4 +109,31 @@ function XPOS = unitXPositions( CUR_LEVEL, TOTAL_LEVEL)
     unitXPos = 0 : 1 : unitLastXPos;
     unitXPos -= unitLastXPos / 2;
     XPOS = unitXPos;
+end
+
+% return all possible unix X positions of a ball with given level and total level
+function BPOS = unitBallPositions( CUR_LEVEL, TOTAL_LEVEL)
+    unitXPos = unitXPositions( CUR_LEVEL, TOTAL_LEVEL);
+    assert( length( unitXPos) >= 2, 'unitXPos must >= 2');
+    % For adjacent x pos we calculate "( x0 + x1) / 2"
+    adjXPos = [ unitXPos( 1 : (end - 1)) ; unitXPos( 2 : end)];
+    BPOS = sum( adjXPos) / 2;
+end
+
+% update ball unit position, based on previous position.
+function NPOS = unitNextPosition( CUR_POS)
+    % get next position where the ball will go
+    xPos = CUR_POS( 1);
+    yPos = CUR_POS( 2);
+    assert( yPos > 0, 'Y position must larger than 0');
+    % update x position when yPos > 1
+    if yPos > 1
+        if rand() <= 0.5
+            xPos -= 0.5;
+        else
+            xPos += 0.5;
+        end
+    end
+    yPos -= 1;
+    NPOS = [ xPos yPos];
 end
