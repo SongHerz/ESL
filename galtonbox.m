@@ -76,28 +76,22 @@ function galtonbox ( varargin)
 
     % simulate fall of balls
     for eacBall = 1:BALLS
-        ballPos = ballStartPos;
-        % Redraw initial position of the ball
-        if enableAnimate
-            pause( INTERVAL);
-            refreshdata( fh, 'caller'); 
-            drawnow;
-        end
+        ballFinalXPos = 0;
 
-        while ballPos( 2) > 0
-            ballPos = unitNextPosition( ballPos);
-
-            % Redraw position of the ball
-            if enableAnimate
+        if !enableAnimate
+            ballFinalXPos = unitBallPath( LEVEL, ballStartPos);
+        else
+            [ ballFinalXPos ballPath] = unitBallPath( LEVEL, ballStartPos);
+            for eachPos = 1 : size( ballPath, 2)
+                ballPos = ballPath( :, eachPos)';
                 pause( INTERVAL);
                 refreshdata( fh, 'caller'); 
                 drawnow;
             end
         end
-        assert( ballPos( 2) == 0);
 
         % update barY
-        barYIdx = find( ballLastXPos == ballPos( 1));
+        barYIdx = find( ballLastXPos == ballFinalXPos);
         if !isempty( barYIdx)
             assert( isscalar( barYIdx));
             barY( barYIdx) += 1;
@@ -165,20 +159,45 @@ function BPOS = unitBallPositions( CUR_LEVEL, TOTAL_LEVEL)
     BPOS = sum( adjXPos) / 2;
 end
 
-% update ball unit position, based on previous position.
-function NPOS = unitNextPosition( CUR_POS)
-    % get next position where the ball will go
-    xPos = CUR_POS( 1);
-    yPos = CUR_POS( 2);
-    assert( yPos > 0, 'Y position must larger than 0');
-    % update x position when yPos > 1
-    if yPos > 1
-        if rand() <= 0.5
-            xPos -= 0.5;
-        else
-            xPos += 0.5;
+% Calculate path of the ball, based on start position
+% FXP = unitBallPath( START_POS);
+% [FXP BPATH] = unitBallPath( START_POS);
+%
+% With only one return value, the final x position of the ball is stored in FXP.
+% With two return values, BPATH contains all positions of the ball, including the start and final positions.
+% Each position are stored in column.
+function [FXP, BPATH] = unitBallPath( TOTAL_LEVEL, START_POS)
+    assert( nargout <= 2);
+    nOutputs = nargout;
+
+    % get a series of random numbers
+    % get random number in ( -0.5, 0.5)
+    randMove = rand( 1, TOTAL_LEVEL - 1) - 0.5;
+    % get [-0.5, +0.5] series.
+    randMove = sign(( randMove >= 0) - 0.5) * 0.5;
+    
+    % calculate final x position
+    xStart = START_POS( 1);
+    FXP = xStart + sum( randMove);
+
+
+    if nOutputs > 1
+        % For start/final position random move should be zero
+        randMove = [ 0 randMove 0];
+        % Update x path
+        xPath = zeros( 1, TOTAL_LEVEL + 1);
+        assert( length( xPath) == length( randMove));
+
+        xPath( 1) = xStart;
+        for eachIdx = 2 : length( xPath)
+            xPath( eachIdx) = xPath( eachIdx - 1) + randMove( eachIdx);
         end
+        assert( xPath( end) == FXP);
+
+        % Update y path
+        yStart = START_POS( 2);
+        yPath = yStart : -1 : 0;
+        
+        BPATH = [ xPath; yPath];
     end
-    yPos -= 1;
-    NPOS = [ xPos yPos];
 end
