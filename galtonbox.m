@@ -36,27 +36,41 @@ function galtonbox ( varargin)
         end
     end
 
-    % create a new figure
-    fh = figure;
-    % create a new axis obj
-    axh = gca();
-    hold on
 
     ballStartXPos = unitBallPositions( LEVEL, LEVEL);
     ballLastXPos = unitBallPositions( 1, LEVEL);
     assert( length( ballStartXPos) == 1);
     ballStartPos = [ ballStartXPos( 1) LEVEL];
 
+    % Data for bar graph
+    % barX is ballLastXPos
+    barY = zeros( 1, length( ballLastXPos));
+
+    % create a new figure
+    fh = figure;
+
+    % create box plot
+    boxH = subplot( 2, 1, 1);
+    hold( boxH, 'on');
+
     % plot levels
     pointInterval = 1;
-    plotLevels( axh, LEVEL, pointInterval);
+    xAxisLim = plotLevels( boxH, LEVEL, pointInterval);
     % plot ball with ballPos
     darkGreen = [ 0 0.5 0];
     ballPos = ballStartPos;
-    ballH = plot( axh, ballPos( 1), ballPos( 2), 'o', ...
+    ballH = plot( boxH, ballPos( 1), ballPos( 2), 'o', ...
                     'MarkerFaceColor', darkGreen, 'MarkerEdgeColor', darkGreen, 'MarkerSize', 10);
     set( ballH, 'XDataSource', 'ballPos(1)');
     set( ballH, 'YDataSource', 'ballPos(2)');
+
+    % create bar plot
+    barAxesH = subplot( 2, 1, 2);
+    hold( barAxesH, 'on');
+    xlim( barAxesH, xAxisLim);
+    barH = bar( ballLastXPos, barY);
+    set( barH, 'YDataSource', 'barY');
+
 
     % simulate fall of balls
     for eacBall = 1:BALLS
@@ -70,6 +84,13 @@ function galtonbox ( varargin)
             refreshdata( fh, 'caller'); 
             drawnow;
         end
+        assert( ballPos( 2) == 0);
+        % update barY
+        barYIdx = find( ballLastXPos == ballPos( 1));
+        if !isempty( barYIdx)
+            assert( isscalar( barYIdx));
+            barY( barYIdx) += 1;
+        end
     end
     
 end
@@ -80,10 +101,10 @@ function tf = is_positive_scalar_integer( val)
 end
 
 
-% return start point of a ball, and all possible X positions of the ball in unit position
+% return X limit of the graph
 % SP: start point of the ball, in unit position
 % FXP: final possible x positions of the ball, in unit position
-function plotLevels( AXH, LEVELS, POINT_INTERVAL)
+function XLIM = plotLevels( AXH, LEVELS, POINT_INTERVAL)
     for level = LEVELS : -1 : 1;
         unitXPos = unitXPositions( level, LEVELS); 
         xPos = unitXPos .* POINT_INTERVAL;
@@ -98,7 +119,12 @@ function plotLevels( AXH, LEVELS, POINT_INTERVAL)
     end
     % set axis limit
     xPos = unitXPositions( 1, LEVELS) .* POINT_INTERVAL;
-    axis( [ (xPos(1) - POINT_INTERVAL) (xPos( end) + POINT_INTERVAL) 0 ( (LEVELS + 1) * POINT_INTERVAL)]);
+    xPosMin = xPos(1) - POINT_INTERVAL;
+    xPosMax = xPos( end) + POINT_INTERVAL;
+    yPosMin = 0;
+    yPosMax = (LEVELS + 1) * POINT_INTERVAL;
+    axis( [ xPosMin xPosMax yPosMin yPosMax]);
+    XLIM = [ xPosMin xPosMax];
 end
 
 
