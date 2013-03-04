@@ -48,6 +48,8 @@ function galtonbox ( varargin)
     % Data for bar graph
     % barX is ballLastXPos
     barY = zeros( 1, length( ballLastXPos));
+    % normalized barY, each number is normalized by total balls
+    barNormY = barY;
 
     % create a new figure
     fh = figure;
@@ -71,12 +73,21 @@ function galtonbox ( varargin)
     barAxesH = subplot( 2, 1, 2);
     hold( barAxesH, 'on');
     xlim( barAxesH, xAxisLim);
-    barH = bar( ballLastXPos, barY);
-    set( barH, 'YDataSource', 'barY');
+    barH = bar( ballLastXPos, barNormY);
+    set( barH, 'YDataSource', 'barNormY');
+
+    % normal distribution curve
+    normX = linspace( xAxisLim( 1), xAxisLim( 2), 100);
+    normY = zeros( size( normX));
+    normH = plot( normX, normY, '-b', 'LineWidth', 2);
+    set( normH, 'YDataSource', 'normY');
+
+    % remember where the ball has fall in
+    ballFinalXPositions = zeros( 1, BALLS);
 
 
     % simulate fall of balls
-    for eacBall = 1:BALLS
+    for eachBall = 1:BALLS
         ballFinalXPos = 0;
 
         if !enableAnimate
@@ -91,14 +102,26 @@ function galtonbox ( varargin)
             end
         end
 
+        % update ball final x positions
+        ballFinalXPositions( eachBall) = ballFinalXPos;
+        % only update normal distribution curve when necessary
+        if enableAnimate || eachBall == BALLS
+            meanXPos = mean( ballFinalXPositions( 1 : eachBall));
+            varXPos = var( ballFinalXPositions( 1 : eachBall));
+            if varXPos != 0
+                normY = ncurve( meanXPos, varXPos, normX);
+            end
+        end
+
         % update barY
         barYIdx = find( ballLastXPos == ballFinalXPos);
         if !isempty( barYIdx)
             assert( isscalar( barYIdx));
             barY( barYIdx) += 1;
+            barNormY = barY ./ eachBall;
         end
 
-        % Update ball and bar
+        % Update ball, bar, and normmal distribution curve
         if enableAnimate
             pause( INTERVAL);
             refreshdata( fh, 'caller'); 
