@@ -4,6 +4,7 @@
 ## @var{LEVEL} means how many levels. ( Default: 1)
 ## @var{BALLS} means how many balls. ( Default: 1)
 ## @var{INTERVAL} means interval between each frame in seconds. If omitted or 0, no animation.
+## @end deftypefn
 
 function galtonbox ( varargin)
 
