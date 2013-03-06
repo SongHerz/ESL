@@ -1,11 +1,11 @@
 ## -*- texinfo -*-
-## @deftypefn {Function File} {@var{Y} =} ncurve ( @var{M}, @var{V}, @var{X})
+## @deftypefn {Function File} {@var{Y} =} ncurve ( @var{X}, @var{M}, @var{V})
 ## Generate @var{Y} values for normal distribution with mean @var{M}, variance @var{V},
 ## and @var{X} values.
 ## The dimension of @var{Y} is the same as @var{X}
 ## @end deftypefn
 
-function Y = ncurve( M, V, X)
+function Y = ncurve( X, M, V)
 
     nargs = nargin;
     if nargs != 3
@@ -41,7 +41,7 @@ end
 %!     M = eachS.M;
 %!     V = eachS.V;
 %!     standard = sqrt( V);
-%!     fh = @(x) ncurve( M, V, x);
+%!     fh = @(x) ncurve( x, M, V);
 %!     p = quad( fh, -standard, standard);
 %!     assert( p - 0.68 <= 0.05);
 %!     p = quad( fh, -2*standard, 2*standard);

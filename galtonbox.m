@@ -109,7 +109,7 @@ function galtonbox ( varargin)
             meanXPos = mean( ballFinalXPositions( 1 : eachBall));
             varXPos = var( ballFinalXPositions( 1 : eachBall));
             if varXPos != 0
-                normY = ncurve( meanXPos, varXPos, normX);
+                normY = ncurve( normX, meanXPos, varXPos);
             end
         end
 
