@@ -49,6 +49,7 @@ end
 %! P = npdf2( XX, YY, MU, SIGMA);
 %! figure;
 %! surfc( XX, YY, P);
+%! xlabel( 'X'), ylabel( 'Y'), zlabel( 'P');
 %! title( { sprintf('mean(X) = %f', MU(1)), ...
 %!        sprintf('mean(Y) = %f', MU(2)), ...
 %!        sprintf('SIGMA = %s', mat2str( SIGMA)) });
@@ -63,6 +64,7 @@ end
 %! P = npdf2( XX, YY, MU, SIGMA);
 %! figure;
 %! surfc( XX, YY, P);
+%! xlabel( 'X'), ylabel( 'Y'), zlabel( 'P');
 %! title( { sprintf('mean(X) = %f', MU(1)), ...
 %!        sprintf('mean(Y) = %f', MU(2)), ...
 %!        sprintf('SIGMA = %s', mat2str( SIGMA)) });
@@ -76,6 +78,7 @@ end
 %! P = npdf2( XX, YY, MU, SIGMA);
 %! figure;
 %! surfc( XX, YY, P);
+%! xlabel( 'X'), ylabel( 'Y'), zlabel( 'P');
 %! title( { sprintf('mean(X) = %f', MU(1)), ...
 %!        sprintf('mean(Y) = %f', MU(2)), ...
 %!        sprintf('SIGMA = %s', mat2str( SIGMA)) });
@@ -89,6 +92,7 @@ end
 %! P = npdf2( XX, YY, MU, SIGMA);
 %! figure;
 %! surfc( XX, YY, P);
+%! xlabel( 'X'), ylabel( 'Y'), zlabel( 'P');
 %! title( { sprintf('mean(X) = %f', MU(1)), ...
 %!        sprintf('mean(Y) = %f', MU(2)), ...
 %!        sprintf('SIGMA = %s', mat2str( SIGMA)) });
