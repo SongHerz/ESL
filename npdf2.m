@@ -39,3 +39,56 @@ function P = npdf2( X, Y, MU, SIGMA)
     end
 end
 
+
+%!demo
+%! MU = [0 0]';
+%! SIGMA = [1 0; 0 1];
+%! X = linspace( MU(1) - 2, MU(1) + 2, 40);
+%! Y = linspace( MU(2) - 2, MU(2) + 2, 40);
+%! [XX YY] = meshgrid( X, Y);
+%! P = npdf2( XX, YY, MU, SIGMA);
+%! figure;
+%! surfc( XX, YY, P);
+%! title( { sprintf('mean(X) = %f', MU(1)), ...
+%!        sprintf('mean(Y) = %f', MU(2)), ...
+%!        sprintf('SIGMA = %s', mat2str( SIGMA)) });
+
+
+%!demo
+%! MU = [1 2]';
+%! SIGMA = [1 0; 0 1];
+%! X = linspace( MU(1) - 2, MU(1) + 2, 40);
+%! Y = linspace( MU(2) - 2, MU(2) + 2, 40);
+%! [XX YY] = meshgrid( X, Y);
+%! P = npdf2( XX, YY, MU, SIGMA);
+%! figure;
+%! surfc( XX, YY, P);
+%! title( { sprintf('mean(X) = %f', MU(1)), ...
+%!        sprintf('mean(Y) = %f', MU(2)), ...
+%!        sprintf('SIGMA = %s', mat2str( SIGMA)) });
+
+%!demo
+%! MU = [0 0]';
+%! SIGMA = [1 0.9; 0.9 1];
+%! X = linspace( MU(1) - 2, MU(1) + 2, 40);
+%! Y = linspace( MU(2) - 2, MU(2) + 2, 40);
+%! [XX YY] = meshgrid( X, Y);
+%! P = npdf2( XX, YY, MU, SIGMA);
+%! figure;
+%! surfc( XX, YY, P);
+%! title( { sprintf('mean(X) = %f', MU(1)), ...
+%!        sprintf('mean(Y) = %f', MU(2)), ...
+%!        sprintf('SIGMA = %s', mat2str( SIGMA)) });
+
+%!demo
+%! MU = [0 0]';
+%! SIGMA = [1 -0.9; -0.9 1];
+%! X = linspace( MU(1) - 2, MU(1) + 2, 40);
+%! Y = linspace( MU(2) - 2, MU(2) + 2, 40);
+%! [XX YY] = meshgrid( X, Y);
+%! P = npdf2( XX, YY, MU, SIGMA);
+%! figure;
+%! surfc( XX, YY, P);
+%! title( { sprintf('mean(X) = %f', MU(1)), ...
+%!        sprintf('mean(Y) = %f', MU(2)), ...
+%!        sprintf('SIGMA = %s', mat2str( SIGMA)) });
