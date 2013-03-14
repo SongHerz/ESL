@@ -22,8 +22,12 @@ function xorproblem()
     P(4).pos = [0.886 0.078]; 
 
     ah = gca();
-    % plotPoints( ah, P);
-    classify( ah, P, @svmtrain, @svmpredict, '-t 1 -c 100 -s 0 -g 0.5');
+    [ regionX regionY, regionPredict] = classify( ah, P, @svmtrain, @svmpredict, '-t 1 -c 100 -s 0 -g 0.5');
+    
+    % draw classification
+    hold on
+    plotPoints( ah, P);
+    plotPredict( ah, regionX, regionY, regionPredict);
 end
 
 
@@ -31,9 +35,11 @@ end
 % AH: A axis handle, where to draw.
 % POINTS: A structure array that contains label and position.
 % trainH: A function handle to train function.
-% prediateH: A function handle to predicate function.
+% predictH: A function handle to predict function.
 % OPTIONS: A string which is the option for train function.
-function REGION = classify( AH, POINTS, trainH, predicateH, trainOPT)
+% Return
+% REGIONX, REGIONY, REGIONPREDICT: values that can be pssed to contourf(...)
+function [REGIONX REGIONY REGIONPREDICT] = classify( AH, POINTS, trainH, predictH, trainOPT)
     assert( nargin == 5, 'There must be 5 arguments');
 
     labels = vertcat( POINTS.label);
@@ -57,27 +63,21 @@ function REGION = classify( AH, POINTS, trainH, predicateH, trainOPT)
     assert( size( sampleXX) == size( sampleYY));
     samplePoint = [ sampleXX(:) sampleYY(:)];
 
-    % predicate sample points
-    predicateLabel = predicateH( zeros( size( samplePoint, 1), 1), samplePoint, model);
+    % predict sample points
+    predictLabel = predictH( zeros( size( samplePoint, 1), 1), samplePoint, model);
+    % predict matrix
+    predictLabelMatrix = reshape( predictLabel, size( sampleXX));
 
-    %% draw region
-    hold on
-    % draw points
-    plotPoints( AH, POINTS);
-    % draw predicate region
-    predicateLabelMatrix = reshape( predicateLabel, size( sampleXX));
-    contourf( AH, sampleXX, sampleYY, predicateLabelMatrix, 1);
-    % set color map for the contour region
-    midLabel = ( min( labels) + max( labels)) / 2;
-    distLabel = max(labels) - min( labels);
-    caxis( AH, [ midLabel - distLabel, midLabel + distLabel]);
+    REGIONX = sampleX;
+    REGIONY = sampleY;
+    REGIONPREDICT = predictLabelMatrix;
 end
 
 % plot points according to their label and position
 % AH: A axis handle, where the points will be drawed.
 % POINTS: A structure array that contains label and position.
 function plotPoints( AH, POINTS)
-    oldHold = ishold();
+    oldHold = ishold( AH);
     hold( AH, 'on');
 
     for point = POINTS
@@ -98,7 +98,31 @@ function plotPoints( AH, POINTS)
              'MarkerSize', 10);
     end
 
-    assert( ishold());
+    assert( ishold( AH));
+    if !oldHold
+        hold( AH, 'off');
+    end
+end
+
+% plot region according to predict results
+% AH: A axis handle, where the points will be drawed.
+% REGIONX, REGIONY, REGIONPREDICT: x, y points, and prediction on the points
+function plotPredict( AH, REGIONX, REGIONY, REGIONPREDICT)
+    assert( nargin == 4, "There must be 4 arguments");
+    assert( ndims( REGIONPREDICT) == 2);
+    
+    oldHold = ishold( AH);
+    numLabels = length( unique( REGIONPREDICT));
+    contourf( AH, REGIONX, REGIONY, REGIONPREDICT, numLabels - 1 );
+    
+    % set color map for the contour region
+    maxLabel = max( max( REGIONPREDICT));
+    minLabel = min( min( REGIONPREDICT));
+    midLabel = ( maxLabel + minLabel) / 2;
+    distLabel = maxLabel - minLabel;
+    caxis( AH, [ midLabel - distLabel, midLabel + distLabel]);
+
+    assert( ishold( AH));
     if !oldHold
         hold( AH, 'off');
     end
