@@ -58,10 +58,9 @@ function internal_classifytoy( AH, POINTS, LIBNAME, TRAINOPT)
 
     switch LIBNAME
         case 'linear'
-            assert( 0, "Do not support LibLinear now");
+            [ trainFunc, predictFunc] = deal( @train, @predict);
         case 'svm'
-            trainFunc = @svmtrain;
-            predictFunc = @svmpredict;
+            [ trainFunc, predictFunc] = deal( @svmtrain, @svmpredict);
         otherwise
             assert( 0, 'Unknown library');
     end
@@ -102,7 +101,9 @@ function [REGIONX REGIONY REGIONPREDICT] = classify( AH, POINTS, trainH, predict
     insts = vertcat( POINTS.pos);
     assert( size( insts, 2) == 2);
 
-    model = trainH( labels, insts, trainOPT);
+    % LibLinear requires sparse matrix as training samples
+    % LibSVM accepts both full and sparse training samples
+    model = trainH( labels, sparse( insts), trainOPT);
 
     % sample points from region
     pointX = insts(:, 1);
@@ -120,7 +121,9 @@ function [REGIONX REGIONY REGIONPREDICT] = classify( AH, POINTS, trainH, predict
     samplePoint = [ sampleXX(:) sampleYY(:)];
 
     % predict sample points
-    predictLabel = predictH( zeros( size( samplePoint, 1), 1), samplePoint, model);
+    % LibLinear requires sparse matrix as predict samples
+    % LibSVM accepts both full and sparse predict samples
+    predictLabel = predictH( sparse( zeros( size( samplePoint, 1), 1)), sparse( samplePoint), model);
     % predict matrix
     predictLabelMatrix = reshape( predictLabel, size( sampleXX));
 
@@ -175,7 +178,13 @@ function plotPredict( AH, REGIONX, REGIONY, REGIONPREDICT)
     
     oldHold = ishold( AH);
     numLabels = length( unique( REGIONPREDICT));
-    contourf( AH, REGIONX, REGIONY, REGIONPREDICT, numLabels - 1 );
+
+    numLines = numLabels - 1;
+    assert( numLines >= 0);
+    if numLines == 0
+        numLines = 1;
+    end
+    contourf( AH, REGIONX, REGIONY, REGIONPREDICT, numLines );
     
     % set color map for the contour region
     maxLabel = max( max( REGIONPREDICT));
