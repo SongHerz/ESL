@@ -189,6 +189,14 @@ function plotPredict( AH, REGIONX, REGIONY, REGIONPREDICT)
     % set color map for the contour region
     maxLabel = max( max( REGIONPREDICT));
     minLabel = min( min( REGIONPREDICT));
+
+    % When there is only one label, force minLabel to be the negation 
+    % of the maxLabel, and the color of contourf() looks better.
+    if minLabel == maxLabel
+        % Make sure maxLabel is positive
+        maxLabel = abs( maxLabel);
+        minLabel = -maxLabel;
+    end
     midLabel = ( maxLabel + minLabel) / 2;
     distLabel = maxLabel - minLabel;
     caxis( AH, [ midLabel - distLabel, midLabel + distLabel]);
