@@ -13,13 +13,13 @@
 function xorproblem()
     % prepare 4 points
     P(1).label = -1;
-    P(1).pos = [0.078 0.082];
+    P(1).pos = [0 0];
     P(2).label = -1;
-    P(2).pos = [0.904 0.912];
+    P(2).pos = [1 1];
     P(3).label = 1;
-    P(3).pos = [0.048 0.952];
+    P(3).pos = [0 1];
     P(4).label = 1;
-    P(4).pos = [0.886 0.078]; 
+    P(4).pos = [1 0]; 
 
     % Prepare library, trainoption array.
     T(1).lib = 'svm'; T(1).trainopt = '-s 0 -t 0';
