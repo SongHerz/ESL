@@ -39,28 +39,6 @@ function xorproblem()
     T(15).lib = 'linear'; T(15).trainopt = '-s 6';
     T(16).lib = 'linear'; T(16).trainopt = '-s 7';
 
-    % set col:row = 3:2
-    % 3x * 2x = number of subplots
-    numRow = floor( 2 * sqrt( length( T) / 6));
-    numCol = ceil( length( T) / numRow);
-
-
-    fh = figure();
-    setFigureSize( fh, numCol * 200, numRow * 200);
-    numIdx = 0;
-    for eachT = T
-        numIdx += 1;
-        ah = subplot( numRow, numCol, numIdx);
-        % classifytoy( ah, P, 'svm', '-t 1 -c 100 -s 0 -g 0.5');
-        classifytoy( ah, P, eachT.lib, eachT.trainopt);
-        title( ah, cstrcat( eachT.lib, ' ', eachT.trainopt));
-    end
+    classifycomp( P, T, 3, 2);
 end
 
-
-% set figure size
-function setFigureSize( FH, WIDTH, HEIGHT)
-    figurePos = get( FH, 'Position');
-    figurePos( 3:4) = [ WIDTH HEIGHT];
-    set( FH, 'Position', figurePos);
-end
