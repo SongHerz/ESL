@@ -112,6 +112,11 @@ function [REGIONX REGIONY REGIONPREDICT] = classify( AH, POINTS, trainH, predict
     maxX = max( pointX);
     minY = min( pointY);
     maxY = max( pointY);
+    
+    if minY == maxY
+        minY -= (maxX - minX)/2;
+        maxY += (maxX - minX)/2;
+    end
 
     sampleX = linspace( minX, maxX, 100);
     sampleY = linspace( minY, maxY, 100);
