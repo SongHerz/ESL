@@ -23,11 +23,13 @@
 
 function classifycomp( POINTS, TRAINS, WIDTH, HEIGHT)
     numClassifiers = length( TRAINS);
+    assert( numClassifiers > 0, 'There must be at least one classifiers');
 
     % calculate rows and columns of subplots
     % col : row = WIDTH : HEIGHT;
     % ( HEIGHT * x) * ( WIDTH * x) = number of subplots
     numRow = floor( HEIGHT * sqrt( numClassifiers / ( WIDTH * HEIGHT)));
+    if numRow == 0, numRow = 1; end
     numCol = ceil( numClassifiers / numRow);
 
     
