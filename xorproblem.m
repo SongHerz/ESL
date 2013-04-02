@@ -39,6 +39,21 @@ function xorproblem()
     T(15).lib = 'linear'; T(15).trainopt = '-s 6';
     T(16).lib = 'linear'; T(16).trainopt = '-s 7';
 
-    classifycomp( P, T, 3, 2);
+    ttIdx = 0;
+    TT = [];
+    for eachT = T
+        ttIdx += 1;
+        TT(ttIdx).lib = eachT.lib;
+        TT(ttIdx).trainopt = eachT.trainopt;
+
+        if strcmp( eachT.lib, 'svm')
+            ttIdx += 1;
+            TT(ttIdx).lib = eachT.lib;
+            TT(ttIdx).trainopt = cstrcat( eachT.trainopt, ' -b 1');
+            TT(ttIdx).predictopt = '-b 1';
+        end
+    end
+
+    classifycomp( P, TT, 3, 2);
 end
 

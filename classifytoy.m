@@ -1,5 +1,5 @@
 ## -*- texinfo -*-
-## @deftypefn {Function File} {} classifytoy( POINTS, LIBNAME, TRAINOPT)
+## @deftypefn {Function File} {} classifytoy( POINTS, LIBNAME, TRAINOPT, PREDICTOPT)
 ## @deftypefnx {Function File} {} classifytoy( AH, ...)
 ## Classify 2D points with LibSVM/LibLinear.
 ##
@@ -16,6 +16,9 @@
 ## @var{TRAINOPT} is the option for training, which is the same as 'train' from LibLinear
 ## and 'svm-train' from LibSVM.
 ##
+## @var{PREDICTOPT} is the option for prediction, which is the same as 'predict' from LibLinear
+## and 'svm-predict' from LibSVM.
+##
 ## If an axes handle is passed as the first argument, then operate on
 ## this axes rather than the current axes.
 ##
@@ -26,32 +29,33 @@
 
 function classifytoy( varargin)
     ninputs = nargin;
-    assert( ninputs == 3 || ninputs == 4, 'There must be 3 or 4 arguments');
+    assert( ninputs == 4 || ninputs == 5, 'There must be 4 or 5 arguments');
 
     AH = [];
     POINTS = [];
     LIBNAME = [];
     TRAINOPT = [];
+    PREDICTOPT = [];
 
     switch ninputs
-        case 3
-            AH = gca();
-            [ POINTS, LIBNAME, TRAINOPT] = varargin{:};
         case 4
-            [ AH, POINTS, LIBNAME, TRAINOPT] = varargin{:};
+            AH = gca();
+            [ POINTS, LIBNAME, TRAINOPT, PREDICTOPT] = varargin{:};
+        case 5
+            [ AH, POINTS, LIBNAME, TRAINOPT, PREDICTOPT] = varargin{:};
         otherwise
             assert( 0, 'Never be here');
     end
 
-    internal_classifytoy( AH, POINTS, LIBNAME, TRAINOPT);
+    internal_classifytoy( AH, POINTS, LIBNAME, TRAINOPT, PREDICTOPT);
 end
 
 
 
 
 % internal function for classifytoy
-function internal_classifytoy( AH, POINTS, LIBNAME, TRAINOPT)
-    assert( nargin == 4, 'There must be 4 arguments');
+function internal_classifytoy( AH, POINTS, LIBNAME, TRAINOPT, PREDICTOPT)
+    assert( nargin == 5, 'There must be 5 arguments');
 
     trainFunc = [];
     predictFunc = [];
@@ -66,7 +70,7 @@ function internal_classifytoy( AH, POINTS, LIBNAME, TRAINOPT)
     end
     
 
-    [ regionX, regionY, regionPredict] = classify( AH, POINTS, trainFunc, predictFunc, TRAINOPT);
+    [ regionX, regionY, regionPredict] = classify( AH, POINTS, trainFunc, TRAINOPT, predictFunc, PREDICTOPT);
     
     % draw classification
     oldHold = ishold( AH);
@@ -94,8 +98,8 @@ end
 % OPTIONS: A string which is the option for train function.
 % Return
 % REGIONX, REGIONY, REGIONPREDICT: values that can be pssed to contourf(...)
-function [REGIONX REGIONY REGIONPREDICT] = classify( AH, POINTS, trainH, predictH, trainOPT)
-    assert( nargin == 5, 'There must be 5 arguments');
+function [REGIONX REGIONY REGIONPREDICT] = classify( AH, POINTS, trainH, trainOPT, predictH, predictOPT)
+    assert( nargin == 6, 'There must be 6 arguments');
 
     labels = vertcat( POINTS.label);
     insts = vertcat( POINTS.pos);
@@ -128,7 +132,7 @@ function [REGIONX REGIONY REGIONPREDICT] = classify( AH, POINTS, trainH, predict
     % predict sample points
     % LibLinear requires sparse matrix as predict samples
     % LibSVM accepts both full and sparse predict samples
-    predictLabel = predictH( sparse( zeros( size( samplePoint, 1), 1)), sparse( samplePoint), model);
+    predictLabel = predictH( sparse( zeros( size( samplePoint, 1), 1)), sparse( samplePoint), model, predictOPT);
     % predict matrix
     predictLabelMatrix = reshape( predictLabel, size( sampleXX));
 

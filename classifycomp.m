@@ -1,8 +1,8 @@
 ## -*- texinfo -*-
-## @deftypefn {Function File} {} classifycomp( POINTS, TRAINS, WIDTH, HEIGHT)
+## @deftypefn {Function File} {} classifycomp( POINTS, OPTS, WIDTH, HEIGHT)
 ## Compare classifiers for given points @var{POINTS} with classifytoy().
 ##
-## Each classifier parameters are given from @var{TRAINS}.
+## Each classifier parameters are given from @var{OPTS}.
 ## For each train parameter there is a subplot.
 ##
 ## The ratio of width/height of the whole figure are specified by @var{WIDTH} and @var{HEIGHT}
@@ -14,15 +14,16 @@
 ## s(2).label = label_value_2; s(2).pos = [ x_value_2 y_value_2];
 ## @end example
 ##
-## @var{TRAINS} are a structure array, that contains various classify parameters.
+## @var{OPTS} are a structure array, that contains various classify parameters.
+## It contains 'lib', 'trainopt', and 'predictopt' fields, and 'predictopt' can be omitted.
 ## @example
 ## E.g.
-## t(1).lib = 'svm'; t(1).trainopt = '-s 0 -t 0';
+## t(1).lib = 'svm'; t(1).trainopt = '-s 0 -t 0 -b 1'; t(1).predictopt = '-b 1';
 ## t(2).lib = 'linear'; t(2).trainopt = '-s 1';
 ## @end example
 
-function classifycomp( POINTS, TRAINS, WIDTH, HEIGHT)
-    numClassifiers = length( TRAINS);
+function classifycomp( POINTS, OPTS, WIDTH, HEIGHT)
+    numClassifiers = length(OPTS);
     assert( numClassifiers > 0, 'There must be at least one classifiers');
 
     % calculate rows and columns of subplots
@@ -36,12 +37,15 @@ function classifycomp( POINTS, TRAINS, WIDTH, HEIGHT)
     fh = figure();
     setFigureSize( fh, numCol * 200, numRow * 200);
     numIdx = 0;
-    for eachT = TRAINS
+    for eachOpt = OPTS
         numIdx += 1;
         ah = subplot( numRow, numCol, numIdx);
-        % classifytoy( ah, P, 'svm', '-t 1 -c 100 -s 0 -g 0.5');
-        classifytoy( ah, POINTS, eachT.lib, eachT.trainopt);
-        title( ah, cstrcat( eachT.lib, ' ', eachT.trainopt));
+        predictopt = '';
+        if isfield( eachOpt, 'predictopt') && !isempty( eachOpt.predictopt)
+            predictopt = eachOpt.predictopt;
+        end 
+        classifytoy( ah, POINTS, eachOpt.lib, eachOpt.trainopt, predictopt);
+        title( ah, cstrcat( eachOpt.lib, ' train: ', eachOpt.trainopt, ' predict: ', predictopt));
     end
 end
 
