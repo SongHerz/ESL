@@ -77,82 +77,9 @@ function internal_classifytoy( AH, POINTS, LIBNAME, TRAINOPT, PREDICTOPT)
         hold( AH, 'on');
     end
 
-    plotPoints( AH, POINTS);
-    plotPredict( AH, regionX, regionY, regionPredict);
+    plotpoints( AH, POINTS);
+    plotregionpredict( AH, regionX, regionY, regionPredict);
 
-    if !oldHold
-        hold( AH, 'off');
-    end
-end
-
-
-% plot points according to their label and position
-% AH: A axis handle, where the points will be drawed.
-% POINTS: A structure array that contains label and position.
-function plotPoints( AH, POINTS)
-    oldHold = ishold( AH);
-    hold( AH, 'on');
-
-    for point = POINTS
-        label = point.label;
-        pointX = point.pos(1);
-        pointY = point.pos(2);
-        color = '';
-        switch label
-            case -1 color = 'r';
-            case  1 color = 'b';
-            otherwise assert( 0, sprintf("Unknown label: %f", label));
-        end
-        printf("X = %f, Y = %f\n", pointX, pointY);
-        plot( AH, pointX, pointY, '.',
-             'Marker', 's',
-             'MarkerFaceColor', color,
-             'MarkerEdgeColor', color,
-             'MarkerSize', 10);
-    end
-
-    assert( ishold( AH));
-    if !oldHold
-        hold( AH, 'off');
-    end
-end
-
-
-
-
-% plot region according to predict results
-% AH: A axis handle, where the points will be drawed.
-% REGIONX, REGIONY, REGIONPREDICT: x, y points, and prediction on the points
-function plotPredict( AH, REGIONX, REGIONY, REGIONPREDICT)
-    assert( nargin == 4, "There must be 4 arguments");
-    assert( ndims( REGIONPREDICT) == 2);
-    
-    oldHold = ishold( AH);
-    numLabels = length( unique( REGIONPREDICT));
-
-    numLines = numLabels - 1;
-    assert( numLines >= 0);
-    if numLines == 0
-        numLines = 1;
-    end
-    contourf( AH, REGIONX, REGIONY, REGIONPREDICT, numLines );
-    
-    % set color map for the contour region
-    maxLabel = max( max( REGIONPREDICT));
-    minLabel = min( min( REGIONPREDICT));
-
-    % When there is only one label, force minLabel to be the negation 
-    % of the maxLabel, and the color of contourf() looks better.
-    if minLabel == maxLabel
-        % Make sure maxLabel is positive
-        maxLabel = abs( maxLabel);
-        minLabel = -maxLabel;
-    end
-    midLabel = ( maxLabel + minLabel) / 2;
-    distLabel = maxLabel - minLabel;
-    caxis( AH, [ midLabel - distLabel, midLabel + distLabel]);
-
-    assert( ishold( AH));
     if !oldHold
         hold( AH, 'off');
     end
