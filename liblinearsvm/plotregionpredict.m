@@ -1,8 +1,8 @@
 ## -*- texinfo -*-
 ## @deftypefn {Function File} {} plotregionpredict( @var{AH}, @var{REGIONX}, @var{RETIONY}, @var{REGIONPREDICT})
-## Plot prediction of a region according to predict results
+## Plot prediction of a region according to predict results. ( Support multiple labels)
 ##
-## @var{AH} is a axis handle, where the points will be drawed.
+## @var{AH} is a axis handle, where to plot.
 ##
 ## @var{REGIONX}, @var{REGIONY}, and @var{REGIONPREDICT} are x, y points, and prediction on the points. They are return values of classifyregion( ...) function.
 function plotregionpredict( AH, REGIONX, REGIONY, REGIONPREDICT)
@@ -10,6 +10,7 @@ function plotregionpredict( AH, REGIONX, REGIONY, REGIONPREDICT)
     assert( ndims( REGIONPREDICT) == 2);
     
     oldHold = ishold( AH);
+    hold( AH, 'on');
     numLabels = length( unique( REGIONPREDICT));
 
     numLines = numLabels - 1;

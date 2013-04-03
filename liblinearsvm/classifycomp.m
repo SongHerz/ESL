@@ -40,12 +40,9 @@ function classifycomp( POINTS, OPTS, WIDTH, HEIGHT)
     for eachOpt = OPTS
         numIdx += 1;
         ah = subplot( numRow, numCol, numIdx);
-        predictopt = '';
-        if isfield( eachOpt, 'predictopt') && !isempty( eachOpt.predictopt)
-            predictopt = eachOpt.predictopt;
-        end 
-        classifytoy( ah, POINTS, eachOpt.lib, eachOpt.trainopt, predictopt);
-        title( ah, cstrcat( eachOpt.lib, ' train: ', eachOpt.trainopt, ' predict: ', predictopt));
+        reformedOpt = reformclassifyopt( eachOpt);
+        classifytoy( ah, POINTS, reformedOpt.lib, reformedOpt.trainopt, reformedOpt.predictopt);
+        title( ah, cstrcat( reformedOpt.lib, ' train: ', reformedOpt.trainopt, ' predict: ', reformedOpt.predictopt));
     end
 end
 

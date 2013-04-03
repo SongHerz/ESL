@@ -55,18 +55,7 @@ end
 function internal_classifytoy( AH, POINTS, LIBNAME, TRAINOPT, PREDICTOPT)
     assert( nargin == 5, 'There must be 5 arguments');
 
-    trainFunc = [];
-    predictFunc = [];
-
-    switch LIBNAME
-        case 'linear'
-            [ trainFunc, predictFunc] = deal( @train, @predict);
-        case 'svm'
-            [ trainFunc, predictFunc] = deal( @svmtrain, @svmpredict);
-        otherwise
-            assert( 0, 'Unknown library');
-    end
-    
+    [ trainFunc, predictFunc] = classifyname2funcs( LIBNAME);
 
     [ regionX, regionY, regionPredict] = classifyregion( AH, POINTS, trainFunc, TRAINOPT, predictFunc, PREDICTOPT);
     
