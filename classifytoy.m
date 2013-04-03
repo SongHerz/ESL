@@ -51,8 +51,6 @@ function classifytoy( varargin)
 end
 
 
-
-
 % internal function for classifytoy
 function internal_classifytoy( AH, POINTS, LIBNAME, TRAINOPT, PREDICTOPT)
     assert( nargin == 5, 'There must be 5 arguments');
@@ -70,7 +68,7 @@ function internal_classifytoy( AH, POINTS, LIBNAME, TRAINOPT, PREDICTOPT)
     end
     
 
-    [ regionX, regionY, regionPredict] = classify( AH, POINTS, trainFunc, TRAINOPT, predictFunc, PREDICTOPT);
+    [ regionX, regionY, regionPredict] = classifyregion( AH, POINTS, trainFunc, TRAINOPT, predictFunc, PREDICTOPT);
     
     % draw classification
     oldHold = ishold( AH);
@@ -86,62 +84,6 @@ function internal_classifytoy( AH, POINTS, LIBNAME, TRAINOPT, PREDICTOPT)
         hold( AH, 'off');
     end
 end
-
-
-
-
-% Get matrix with classified region
-% AH: A axis handle, where to draw.
-% POINTS: A structure array that contains label and position.
-% trainH: A function handle to train function.
-% predictH: A function handle to predict function.
-% OPTIONS: A string which is the option for train function.
-% Return
-% REGIONX, REGIONY, REGIONPREDICT: values that can be pssed to contourf(...)
-function [REGIONX REGIONY REGIONPREDICT] = classify( AH, POINTS, trainH, trainOPT, predictH, predictOPT)
-    assert( nargin == 6, 'There must be 6 arguments');
-
-    labels = vertcat( POINTS.label);
-    insts = vertcat( POINTS.pos);
-    assert( size( insts, 2) == 2);
-
-    % LibLinear requires sparse matrix as training samples
-    % LibSVM accepts both full and sparse training samples
-    model = trainH( labels, sparse( insts), trainOPT);
-
-    % sample points from region
-    pointX = insts(:, 1);
-    pointY = insts(:, 2);
-    minX = min( pointX);
-    maxX = max( pointX);
-    minY = min( pointY);
-    maxY = max( pointY);
-    
-    if minY == maxY
-        minY -= (maxX - minX)/2;
-        maxY += (maxX - minX)/2;
-    end
-
-    sampleX = linspace( minX, maxX, 100);
-    sampleY = linspace( minY, maxY, 100);
-
-    [ sampleXX sampleYY] = meshgrid( sampleX, sampleY);
-    assert( size( sampleXX) == size( sampleYY));
-    samplePoint = [ sampleXX(:) sampleYY(:)];
-
-    % predict sample points
-    % LibLinear requires sparse matrix as predict samples
-    % LibSVM accepts both full and sparse predict samples
-    predictLabel = predictH( sparse( zeros( size( samplePoint, 1), 1)), sparse( samplePoint), model, predictOPT);
-    % predict matrix
-    predictLabelMatrix = reshape( predictLabel, size( sampleXX));
-
-    REGIONX = sampleX;
-    REGIONY = sampleY;
-    REGIONPREDICT = predictLabelMatrix;
-end
-
-
 
 
 % plot points according to their label and position
