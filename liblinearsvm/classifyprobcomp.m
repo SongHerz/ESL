@@ -15,8 +15,8 @@ function classifyprobcomp( POS)
 
     offset = 0;
     for eachPO = POS
-        points = POS.points;
-        opt = reformclassifyopt( POS.option);
+        points = eachPO.points;
+        opt = reformclassifyopt( eachPO.option);
         hPreNoProb = subplot( 3, numInstSet, 1 + offset);
         hPreWithProb = subplot( 3, numInstSet, 1 + numInstSet + offset);
         hProbWithProb = subplot( 3, numInstSet, 1 + 2*numInstSet + offset);

@@ -22,7 +22,7 @@ function xorproblem2()
     p(4).pos = [1 0]; 
 
     % Prepare library, trainoption array.
-    opt.lib = 'svm'; opt.trainopt = '-s 1 -t 2'; opt.predictopt = '';
+    opt.lib = 'svm'; opt.trainopt = '-s 1 -t 2 -q'; opt.predictopt = '-q';
 
     POS(1).points = p;
     POS(1).option = opt;

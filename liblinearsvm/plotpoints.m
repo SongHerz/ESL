@@ -20,7 +20,7 @@ function plotpoints( AH, POINTS)
             case  1 color = 'b';
             otherwise assert( 0, sprintf("Unknown label: %f", label));
         end
-        printf("X = %f, Y = %f\n", pointX, pointY);
+        % printf("X = %f, Y = %f\n", pointX, pointY);
         plot( AH, pointX, pointY, '.',
              'Marker', 's',
              'MarkerFaceColor', color,
