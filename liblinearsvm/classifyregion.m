@@ -1,8 +1,6 @@
 ## -*- texinfo -*-
-## @deftypefn {Function File} {[@var{REGIONX}, @var{REGIONY}, @var{REGIONPREDICT}, @var{REGION_DEC_PROB}] =} classifyregion ( @var{AH}, @var{POINTS}, @var{trainH}, @var{trainOPT}, @var{predictH}, @var{predictOPT})
+## @deftypefn {Function File} {[@var{REGIONX}, @var{REGIONY}, @var{REGIONPREDICT}, @var{REGION_DEC_PROB}] =} classifyregion ( @var{POINTS}, @var{trainH}, @var{trainOPT}, @var{predictH}, @var{predictOPT})
 ## Get matrix with classified region
-##
-## @var{AH} is a axis handle, where to draw.
 ##
 ## @var{POINTS} is a structure array that contains label and position.
 ##
@@ -21,8 +19,8 @@
 ##
 ## @var{REGIONX}, @var{REGIONY} and @var{RETION_DEC_PROB} can be passed to imagesc( ...) to plot decision values/probabilities of the retion.
 ## @end deftypefn
-function [REGIONX REGIONY REGIONPREDICT, REGION_DEC_PROB] = classifyregion( AH, POINTS, trainH, trainOPT, predictH, predictOPT)
-    assert( nargin == 6, 'There must be 6 arguments');
+function [REGIONX REGIONY REGIONPREDICT, REGION_DEC_PROB] = classifyregion( POINTS, trainH, trainOPT, predictH, predictOPT)
+    assert( nargin == 5, 'There must be 5 arguments');
 
     labels = vertcat( POINTS.label);
     insts = vertcat( POINTS.pos);

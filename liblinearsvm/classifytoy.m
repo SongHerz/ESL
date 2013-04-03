@@ -57,7 +57,7 @@ function internal_classifytoy( AH, POINTS, LIBNAME, TRAINOPT, PREDICTOPT)
 
     [ trainFunc, predictFunc] = classifyname2funcs( LIBNAME);
 
-    [ regionX, regionY, regionPredict] = classifyregion( AH, POINTS, trainFunc, TRAINOPT, predictFunc, PREDICTOPT);
+    [ regionX, regionY, regionPredict] = classifyregion( POINTS, trainFunc, TRAINOPT, predictFunc, PREDICTOPT);
     
     % draw classification
     oldHold = ishold( AH);
