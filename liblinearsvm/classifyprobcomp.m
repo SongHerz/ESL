@@ -40,7 +40,10 @@ function internal_classifyprobcomp( hPreNoProb, hPreWithProb, hProbWithProb, poi
     % assume opt.trainopt and opt.predictopt contain no '-b 1'
     [ regionX, regionY, regionPredict] = classifyregion( points, trainFunc, opt.trainopt, predictFunc, opt.predictopt);
     draw_prediction( hPreNoProb, points, regionX, regionY, regionPredict);
-    title( hPreNoProb, cstrcat( opt.lib, ' train: ', opt.trainopt, ' predict: ', opt.predictopt));
+    title( hPreNoProb,
+            { sprintf( 'Num of points: %d', length( points)),
+              cstrcat( opt.lib, ' train: ', opt.trainopt, ' predict: ', opt.predictopt)
+            });
 
     % Add '-b 1' option and re-predict
     newTrainOpt = cstrcat( opt.trainopt, ' -b 1');
