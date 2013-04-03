@@ -22,11 +22,16 @@ function xorproblem2()
     p(4).pos = [1 0]; 
 
     % Prepare library, trainoption array.
-    opt.lib = 'svm'; opt.trainopt = '-s 1 -t 2';
+    opt.lib = 'svm'; opt.trainopt = '-s 1 -t 2'; opt.predictopt = '';
 
     POS(1).points = p;
     POS(1).option = opt;
-
+    POS(2).points = [p, p];
+    POS(2).option = opt;
+    POS(3).points = [p, p, p, p];
+    POS(3).option = opt;
+    POS(4).points = [p, p, p, p, p, p, p, p];
+    POS(4).option = opt;
 
     classifyprobcomp( POS);
 end

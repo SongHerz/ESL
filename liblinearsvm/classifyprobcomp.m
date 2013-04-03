@@ -13,14 +13,16 @@ function classifyprobcomp( POS)
     fh = figure();
     setFigureSize( fh, numInstSet * 200, 3 * 200);
 
+    offset = 0;
     for eachPO = POS
         points = POS.points;
         opt = reformclassifyopt( POS.option);
-        hPreNoProb = subplot( 3, numInstSet, 1);
-        hPreWithProb = subplot( 3, numInstSet, 1 + numInstSet);
-        hProbWithProb = subplot( 3, numInstSet, 1 + 2*numInstSet);
+        hPreNoProb = subplot( 3, numInstSet, 1 + offset);
+        hPreWithProb = subplot( 3, numInstSet, 1 + numInstSet + offset);
+        hProbWithProb = subplot( 3, numInstSet, 1 + 2*numInstSet + offset);
 
         internal_classifyprobcomp( hPreNoProb, hPreWithProb, hProbWithProb, points, opt);
+        offset += 1;
     end
 end
 
@@ -38,6 +40,7 @@ function internal_classifyprobcomp( hPreNoProb, hPreWithProb, hProbWithProb, poi
     % assume opt.trainopt and opt.predictopt contain no '-b 1'
     [ regionX, regionY, regionPredict] = classifyregion( points, trainFunc, opt.trainopt, predictFunc, opt.predictopt);
     draw_prediction( hPreNoProb, points, regionX, regionY, regionPredict);
+    title( hPreNoProb, cstrcat( opt.lib, ' train: ', opt.trainopt, ' predict: ', opt.predictopt));
 
     % Add '-b 1' option and re-predict
     newTrainOpt = cstrcat( opt.trainopt, ' -b 1');
@@ -45,8 +48,10 @@ function internal_classifyprobcomp( hPreNoProb, hPreWithProb, hProbWithProb, poi
     [ regionX, regionY, regionPredict, regionProb] = classifyregion( points,
                         trainFunc, newTrainOpt, predictFunc, newPredictOpt);
     draw_prediction( hPreWithProb, points, regionX, regionY, regionPredict);
+    title( hPreWithProb, cstrcat( opt.lib, ' train: ', newTrainOpt, ' predict: ', newPredictOpt));
 
     draw_probability( hProbWithProb, points, regionX, regionY, regionPredict, regionProb);
+    title( hProbWithProb, cstrcat( opt.lib, ' train: ', newTrainOpt, ' predict: ', newPredictOpt));
 end
 
 
@@ -72,6 +77,7 @@ function draw_probability( AH, points, regionX, regionY, regionPredict, regionPr
     plotpoints( AH, points);
     plotregionprobability( AH, regionX, regionY, regionProb);
     contour( AH, regionX, regionY, regionPredict, 1);
+    colorbar( 'peer', AH, 'SouthOutside');
 
     if !oldHold, hold( AH, 'off'); end
 end
