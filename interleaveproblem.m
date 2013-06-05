@@ -21,11 +21,11 @@ function interleaveproblem()
     % Prepare library, trainoption array.
     T(1).lib = 'svm'; T(1).trainopt = '-s 0 -t 0';
     T(2).lib = 'svm'; T(2).trainopt = '-s 0 -t 1';
-    T(3).lib = 'svm'; T(3).trainopt = '-s 0 -t 2';
+    T(3).lib = 'svm'; T(3).trainopt = '-s 0 -t 2 -c 10';
     T(4).lib = 'svm'; T(4).trainopt = '-s 0 -t 3';
     T(5).lib = 'svm'; T(5).trainopt = '-s 1 -t 0';
     T(6).lib = 'svm'; T(6).trainopt = '-s 1 -t 1';
-    T(7).lib = 'svm'; T(7).trainopt = '-s 1 -t 2';
+    T(7).lib = 'svm'; T(7).trainopt = '-s 1 -t 2 -c 1';
     T(8).lib = 'svm'; T(8).trainopt = '-s 1 -t 3';
     T(9).lib = 'linear'; T(9).trainopt = '-s 0';
     T(10).lib = 'linear'; T(10).trainopt = '-s 1';

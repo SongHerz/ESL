@@ -1,5 +1,5 @@
 ## -*- texinfo -*-
-## @deftypefn {Function File} {} interleaveproblem2()
+## @deftypefn {Function File} {} interleaveproblem3()
 ## Test interleave problem for various classification algorithms.
 ## Check if a classification algorithm can split the space reasonably.
 ## This function requires LibSVM and LibLinear for details, please refer:
@@ -7,7 +7,7 @@
 ## http://www.csie.ntu.edu.tw/~cjlin/liblinear/
 ## @end deftypefn
 
-function interleaveproblem2()
+function interleaveproblem3()
     % prepare 4 points
     p(1).label = -1;
     p(1).pos = [0 0];
@@ -19,7 +19,7 @@ function interleaveproblem2()
     p(4).pos = [3 0]; 
 
     % Prepare library, trainoption array.
-    opt.lib = 'svm'; opt.trainopt = '-s 1 -t 2 -c 1 -q'; opt.predictopt = '-q';
+    opt.lib = 'svm'; opt.trainopt = '-s 0 -t 2 -c 10 -q'; opt.predictopt = '-q';
 
     POS(1).tpoints = p;
     POS(1).ppoints = p;
