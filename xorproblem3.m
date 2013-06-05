@@ -1,5 +1,5 @@
 ## -*- texinfo -*-
-## @deftypefn {Function File} {} xorproblem2()
+## @deftypefn {Function File} {} xorproblem3()
 ## Test xor problem for various classification algorithms.
 ## Given 4 points:
 ## white points: (1, 0), (0, 1)
@@ -10,7 +10,7 @@
 ## http://www.csie.ntu.edu.tw/~cjlin/liblinear/
 ## @end deftypefn
 
-function xorproblem2()
+function xorproblem3()
     % prepare 4 points
     p(1).label = -1;
     p(1).pos = [0 0];
@@ -22,7 +22,7 @@ function xorproblem2()
     p(4).pos = [1 0]; 
 
     % Prepare library, trainoption array.
-    opt.lib = 'svm'; opt.trainopt = '-s 1 -t 2 -c 1 -q'; opt.predictopt = '-q';
+    opt.lib = 'svm'; opt.trainopt = '-s 0 -t 2 -c 10 -q'; opt.predictopt = '-q';
 
     POS(1).tpoints = p;
     POS(1).ppoints = p;
