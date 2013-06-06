@@ -57,7 +57,7 @@ function printLabelProb( label, predict_label, prob_estimates, instance_matrix)
     printf("%7s%9s%13s    %s\n", "Label", "Predict", "Probability", "Features");
 
     for eachRow = 1:size( predict_label, 1)
-        printf("%7d%9.1f%13.6f    ", label( eachRow), predict_label( eachRow), max( prob_estimates( eachRow, :)));
+        printf("%7d%9.1f%13.2f    ", label( eachRow), predict_label( eachRow), max( prob_estimates( eachRow, :)));
 
         for eachInst = instance_matrix( eachRow, :)
             printf("%d ", eachInst);
@@ -70,13 +70,17 @@ end
 function printPredictLabelProb( predict_label, prob_estimates, instance_matrix)
     % print labels and probabilities
     assert( size( predict_label, 1) == size( prob_estimates, 1));
-    printf("%9s%13s    %s\n", "Predict", "Probability", "Features");
+    printf("%9s%13s  %s    %s\n", "Predict", "Probability", "All_Probability", "Features");
 
     for eachRow = 1:size( predict_label, 1)
-        printf("%9d%13.6f    ", predict_label( eachRow), max(prob_estimates( eachRow, :)));
+        printf("%9d%13.2f  ", predict_label( eachRow), max(prob_estimates( eachRow, :)));
 
+        for eachProb = prob_estimates( eachRow, :)
+            printf("%5.2f", eachProb);
+        end
+        printf("    ");
         for eachInst = instance_matrix( eachRow, :)
-            printf("%d ", eachInst);
+            printf("%2d", eachInst);
         end
 
         printf("\n");
