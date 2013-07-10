@@ -62,8 +62,8 @@ function [REGIONX REGIONY REGIONPREDICT, REGION_DEC_PROB] = classifyregion( TPOI
 
     % predict matrix
     predictLabelMatrix = reshape( predictLabel, size( psampleXX));
-    % decision values/probabilities matrix, just pick the first column, and reshape.
-    decProbMatrix = reshape( decProb(:, 1), size( psampleXX));
+    % decision values/probabilities matrix, just pick the max column, and reshape.
+    decProbMatrix = reshape( max( decProb, [], 2), size( psampleXX));
 
     REGIONX = psampleX;
     REGIONY = psampleY;
