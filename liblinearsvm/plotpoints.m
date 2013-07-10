@@ -18,6 +18,7 @@ function plotpoints( AH, POINTS)
         switch label
             case -1 color = 'r';
             case  1 color = 'b';
+            case  0 color = 'm';
             otherwise assert( 0, sprintf("Unknown label: %f", label));
         end
         % printf("X = %f, Y = %f\n", pointX, pointY);
